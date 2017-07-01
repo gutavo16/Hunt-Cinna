@@ -1,0 +1,145 @@
+name = "Hunting : Cinnabar Mansion 3f" - Vulpix h.a, magmar, charmander and shiny. 
+author = "Mistery"
+description = [Sync and Parasect 140hp or more (more or less level 70), 
+the Script attacks the unselected pokemons for the hunt, and takes money for you, 
+captures the rare Pokémon with Spore, leaving them sleeping.]]
+
+function onStart()
+startime = os.time() --x
+    pcCount = 0 --x
+    charmander_caught = 0   --x
+    magmar_caught = 0       --x
+    vulpix_caught = 0       --x
+    shiny_count = 0         --x
+    wild_count = 0          --x
+
+
+end
+ 
+function onPause()
+    log(" ")
+    log("===============PAUSED STATUS===============")
+    log("You found " ..wild_count.. " Wild pokemons.")
+    log("You found " ..shiny_count.. " Shinies.")
+    log("You caught " ..vulpix_caught.. " Drought vulpixes.")
+    log("You caught " ..magmar_caught.. " Magmars.")
+    log("You caught " ..charmander_caught.. " Charmanders.")
+    log(" ")
+    log("Times in Pokecenter: "..pcCount)
+log(" ")
+    endtime = os.time()
+    log(string.format("Bot running time: %.2f", os.difftime(endtime,startime)/3600 ).. " hours")
+    log("or")
+    log(string.format("Bot running time: %.2f", os.difftime(endtime,startime)/60 ).. " minutes")
+    log("=========================================")
+end
+ 
+function onStop()
+    log(" ")
+    log("===============PAUSED STATUS===============")
+    log("You found " ..wild_count.. " Wild pokemons.")
+    log("You found " ..shiny_count.. " Shinies.")
+    log("You caught " ..vulpix_caught.. " Drought vulpixes.")
+    log("You caught " ..magmar_caught.. " Magmars.")
+    log("You caught " ..charmander_caught.. " Charmanders.")
+    log(" ")
+    log("Times in Pokecenter: "..pcCount)
+log(" ")
+    endtime = os.time()
+    log(string.format("Bot running time: %.2f", os.difftime(endtime,startime)/3600 ).. " hours")
+    log("or")
+    log(string.format("Bot running time: %.2f", os.difftime(endtime,startime)/60 ).. " minutes")
+    log("=========================================")
+end
+
+function onPathAction()
+    vulpix_found = 0
+    if isPokemonUsable(1) and getPokemonHealth(2)>130  
+	and getPokemonHealth(1)>130 and getRemainingPowerPoints(2, "Spore") then
+	
+        if getMapName() == "Pokecenter Cinnabar" then
+            moveToMap("Cinnabar Island")
+        elseif getMapName() == "Cinnabar Island" then
+ if isMounted() then
+               moveToMap("Cinnabar mansion 1")
+           else
+               useItem("Bicycle")
+               log("Andando de Bike")
+           end
+        elseif getMapName() == "Cinnabar mansion 1" then
+            moveToMap("Cinnabar mansion 2")
+        elseif getMapName() == "Cinnabar mansion 2" then
+            moveToMap("Cinnabar mansion 3")
+        elseif getMapName() == "Cinnabar mansion 3" then
+            moveToRectangle(12,10,14,10)
+        end
+    else
+        if getMapName() == "Cinnabar mansion 3" then
+            moveToMap("Cinnabar mansion 2")
+        elseif getMapName() == "Cinnabar mansion 2" then
+            moveToMap("Cinnabar mansion 1")
+        elseif getMapName() == "Cinnabar mansion 1" then
+            moveToMap("Cinnabar Island")
+        elseif getMapName() == "Cinnabar Island" then
+               if isMounted() then
+               moveToMap("Pokecenter Cinnabar")
+           else
+               useItem("Bicycle")
+               log("Andando de Bike")
+           end
+        elseif getMapName() == "Pokecenter Cinnabar" then
+            usePokecenter()
+        end
+    end
+end
+function onBattleMessage(message)
+ 
+    --H.A VULPIXES
+    if stringContains(message, "The sunlight got bright!") then
+        vulpix_found = 1
+
+
+
+--WILDS
+elseif stringContains(message, "a wild") then
+wild_count = wild_count + 1
+
+    --CAUGHTS
+    elseif stringContains(message, "You caught") and stringContains(message, "Charmander") then
+        charmander_caught = charmander_caught + 1
+    elseif stringContains(message, "You caught") and stringContains(message, "Magmar") then
+        magmar_caught = magmar_caught + 1
+    elseif stringContains(message, "You caught") and stringContains(message, "Vulpix") then
+        vulpix_caught = vulpix_caught + 1
+   
+    --SHINIES
+    elseif stringContains(message, "A wild SHINY") then
+        shiny_count = shiny_count + 1
+    end
+end
+
+	
+
+function onBattleAction()
+   if isWildBattle() and ( isOpponentShiny() or getOpponentName() == "Charmander" or getOpponentName() == "Magmar") then
+                  if getOpponentStatus() ~= "SLEEP" then
+                    return useMove("Spore")  or useItem("Pokeball") or sendUsablePokemon() or run()
+        else     
+                   return useItem("Ultra Ball") or useItem("Great Ball") or useItem("Pokeball") or sendUsablePokemon() or run()
+        end
+
+    elseif (isOpponentShiny() or getOpponentName() == "Vulpix" ) then
+        if vulpix_found == 1 then        
+                  if getOpponentStatus() ~= "SLEEP" then
+                    return useMove("Spore")  or useItem("Pokeball") or sendUsablePokemon() or run()
+        else     
+                   return useItem("Ultra Ball") or useItem("Great Ball") or useItem("Pokeball") or sendUsablePokemon() or run()
+        end
+
+        else
+           return attack() or run() or sendUsablePokemon()
+        end
+    else
+           return run() or attack() or sendUsablePokemon()
+    end
+end
