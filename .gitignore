@@ -1,6 +1,6 @@
-name = "Hunting : Cinnabar Mansion 3f" - Vulpix h.a, magmar, charmander and shiny. 
+name = "Hunting : Cinnabar Mansion 3f - Vulpix h.a, magmar, charmander and shiny." 
 author = "Mistery"
-description = [Sync and Parasect 140hp or more (more or less level 70), 
+description = [[Sync and Parasect 140hp or more (more or less level 70), 
 the Script attacks the unselected pokemons for the hunt, and takes money for you, 
 captures the rare Pokémon with Spore, leaving them sleeping.]]
 
@@ -124,25 +124,23 @@ function onBattleAction()
    if isWildBattle() and ( isOpponentShiny() or getOpponentName() == "Charmander" or getOpponentName() == "Magmar") then
                   if getOpponentStatus() ~= "SLEEP" then
                     return useMove("Spore")  or useItem("Pokeball") or sendUsablePokemon() or run()
-        else     
+        else
                    return useItem("Ultra Ball") or useItem("Great Ball") or useItem("Pokeball") or sendUsablePokemon() or run()
-                
-
-        
         end
 
     elseif (isOpponentShiny() or getOpponentName() == "Vulpix" ) then
-        if vulpix_found == 1 then        
+        if vulpix_found == 1 then
                   if getOpponentStatus() ~= "SLEEP" then
                     return useMove("Spore")  or useItem("Pokeball") or sendUsablePokemon() or run()
-
-            elseif (getOpponentHealth() == 1 ) then
-                return useItem("Ultra Ball") or useItem("great Ball") or useItem("pokeball")
-            end
         else
-           return attack() or sendUsablePokemon()
+                   return useItem("Ultra Ball") or useItem("Great Ball") or useItem("Pokeball") or sendUsablePokemon() or run()
+        end
+        else
+           return attack() or run() or sendUsablePokemon()
         end
     else
-         return attack()  or sendUsablePokemon()
+
+           return run() or attack() or sendUsablePokemon()
     end
+end
 end
