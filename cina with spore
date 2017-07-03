@@ -1,8 +1,9 @@
-name = "Hunting : Cinnabar Mansion 3f" - Vulpix h.a, magmar, charmander and shiny. 
+name = "Hunting : Cinnabar Mansion 3f - Vulpix h.a, magmar, charmander and shiny. "
 author = "Mistery"
-description = [Sync and Parasect 140hp or more (more or less level 70), 
+description = [[Sync and Parasect 140hp or more (more or less level 70), 
 the Script attacks the unselected pokemons for the hunt, and takes money for you, 
 captures the rare Pokémon with Spore, leaving them sleeping.]]
+
 
 function onStart()
 startime = os.time() --x
@@ -54,8 +55,8 @@ end
 
 function onPathAction()
     vulpix_found = 0
-    if isPokemonUsable(1) and getPokemonHealth(2)>130  
-	and getPokemonHealth(1)>130 and getRemainingPowerPoints(2, "Spore") then
+       if (isPokemonUsable(2) and getPokemonHealth(2)>130 
+       and getRemainingPowerPoints(2,"Spore")>2) then
 	
         if getMapName() == "Pokecenter Cinnabar" then
             moveToMap("Cinnabar Island")
@@ -71,7 +72,7 @@ function onPathAction()
         elseif getMapName() == "Cinnabar mansion 2" then
             moveToMap("Cinnabar mansion 3")
         elseif getMapName() == "Cinnabar mansion 3" then
-            moveToRectangle(12,10,14,10)
+            moveToRectangle(12,18,13,18)
         end
     else
         if getMapName() == "Cinnabar mansion 3" then
@@ -121,25 +122,35 @@ end
 	
 
 function onBattleAction()
-   if isWildBattle() and ( isOpponentShiny() or getOpponentName() == "Charmander" or getOpponentName() == "Magmar") then
-                  if getOpponentStatus() ~= "SLEEP" then
-                    return useMove("Spore")  or useItem("Pokeball") or sendUsablePokemon() or run()
-        else     
-                   return useItem("Ultra Ball") or useItem("Great Ball") or useItem("Pokeball") or sendUsablePokemon() or run()
-        end
+         if isWildBattle() and ( isOpponentShiny() or getOpponentName() == "Charmander" or getOpponentName() == "Magmar") then
+    if getActivePokemonNumber() == 1 then
+         return sendPokemon(2) or sendUsablePokemon(2) or sendAnyPokemon()
+    elseif ( getActivePokemonNumber() == 2 ) and ( getOpponentStatus() ~= "SLEEP" ) then
+         return useMove("Spore") or useItem("Pokeball")or sendAnyPokemon() 
+        
+        elseif ( getOpponentStatus() ~= "SLEEP" )  then
+
+            return useItem("Pokeball") or useItem("Great Ball") or useItem("Ultra Ball")  
+        else
+        return useItem("Pokeball") or attack() or sendUsablePokemon()or run ()
+        end    
+		
 
     elseif (isOpponentShiny() or getOpponentName() == "Vulpix" ) then
-        if vulpix_found == 1 then        
-                  if getOpponentStatus() ~= "SLEEP" then
-                    return useMove("Spore")  or useItem("Pokeball") or sendUsablePokemon() or run()
-        else     
-                   return useItem("Ultra Ball") or useItem("Great Ball") or useItem("Pokeball") or sendUsablePokemon() or run()
-        end
-
+         if vulpix_found == 1 then        
+    if getActivePokemonNumber() == 1 then
+         return sendPokemon(2) or sendUsablePokemon(2) or sendAnyPokemon()
+    elseif ( getActivePokemonNumber() == 2 ) and ( getOpponentStatus() ~= "SLEEP" ) then
+         return useMove("Spore") or useItem("Pokeball")or sendAnyPokemon() 
+		 
+            elseif ( getOpponentStatus() ~= "SLEEP" )  then
+			
+                return useItem("Pokeball") or useItem("Great Ball") or useItem("Ultra Ball")
+            end
         else
-           return attack() or run() or sendUsablePokemon()
+           return attack() or run () or sendUsablePokemon()or useItem("Pokeball")
         end
     else
-           return run() or attack() or sendUsablePokemon()
+        return run () or attack () or sendUsablePokemon()or useItem("Pokeball")
     end
 end
